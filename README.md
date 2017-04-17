@@ -2,7 +2,7 @@
 ## Feed Reader Project using Jasmine
 
 This is a Feed Reader Testing App using Jasmine, a Javascript testing framework.
-* <a href="" target="_blank">Live Project Link</a>
+* <a href="https://iamwill123.github.io/feed-Reader-Jasmine-App/" target="_blank">Live Project Link</a>
 
 HOW TO INSTALL
 ==============
