@@ -69,9 +69,9 @@ $(function() {
         // Global vars to be accessed
         var $body = $('body');
         var $menuIcon = $('.menu-icon-link');
-        var menuVis = $('body .slide-menu');
-        var menuWidth = menuVis.width();
-        var menuOffset = menuVis.offset().left;
+        var menuVis,
+            menuWidth,
+            menuOffset;
 
         /* Wrote a test that ensures the menu element is
          * hidden by default. */
@@ -84,13 +84,18 @@ $(function() {
 
         it('icon toggles visibility when clicked', function() {
             $menuIcon.click(); // .click() method simulates a mouse click on an element. https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click
-            console.log(menuWidth); // check the width is 160
+            menuWidth = $('body .slide-menu').outerWidth();
+            menuOffset = $('body .slide-menu').position().left;
+            console.log(menuWidth); // check the width is 192
             console.log(menuOffset); // just checking values
-
-            expect(menuVis.is(':visible')).toBeTruthy(); // to check visibility
-            expect($body.hasClass('menu-hidden')).toBeFalsy();
+            expect(menuWidth).toBeDefined(); // only true if the slide-menu exists
+            expect($body.hasClass('menu-hidden')).toBeFalsy(); // checks to make sure menu-hidden is false
 
             $menuIcon.click();
+            menuWidth = $('body .slide-menu').outerWidth();
+            menuOffset = $('body .slide-menu').position().left;
+            console.log(menuWidth); // check the width is 192
+            console.log(menuOffset); // just checking values
             expect($body.hasClass('menu-hidden')).toBeTruthy(); // has menu-hidden class when clicked again.
         });
 
@@ -101,7 +106,12 @@ $(function() {
          * function is called and completes its work, and there is at least
          * a single .entry element within the .feed container. */
 
-        var $feedContainerEntry = $('div.feed a.entry-link article.entry');
+        // Update: This jQuery container element cannot be retrieved correctly before the test begins because
+        // of asynchronous feature. You can define the variable here, but you should assign the value to it in the
+        // call back of loadFeed in beforeEach or in it.
+
+        var $feedContainerEntry,
+            numOfEntries;
 
          // Ensure loadFeed function works when called
         beforeEach(function(done) { // Jasmine's beforeEach
@@ -109,10 +119,11 @@ $(function() {
         });
          // At least 1 single .entry within the .feed container
         it("has at least 1 entry & it's entry link in the .feed container", function(done) {
-            var numOfEntries = $feedContainerEntry.length;
+            $feedContainerEntry = $('div.feed a.entry-link article.entry');
+            numOfEntries = $feedContainerEntry.length;
             console.log(numOfEntries); // there is at least 1 entry
             console.log($('div.feed a.entry-link article.entry').html()); // to check the first entry's html
-            expect(numOfEntries >= 0).toBeTruthy();
+            expect(numOfEntries).toBeGreaterThan(0);
             expect($('.feed .entry-link').children().hasClass('entry')).toBeTruthy(); // to check the child of .feed .entry-link
             expect($('.feed').children().hasClass('entry-link')).toBeTruthy(); // to check the child of .feed
             done();
@@ -124,8 +135,8 @@ $(function() {
         /* Wrote a test that ensures a new feed is loaded
          * by the loadFeed function and that the content actually changes. */
 
-        var feedContainerContentInit;
-        var feedContainerContentNext;
+        var feedContainerContentInit,
+            feedContainerContentNext;
 
         beforeEach(function(done) { // Jasmine's beforeEach
             loadFeed(0, function() { // load initial content
