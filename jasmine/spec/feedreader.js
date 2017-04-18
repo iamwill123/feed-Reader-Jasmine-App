@@ -19,11 +19,8 @@ $(function() {
 
         /* This is our first test - it tests to make sure that the
          * allFeeds variable has been defined and that it is not
-         * empty. Experiment with this before you get started on
-         * the rest of this project. What happens when you change
-         * allFeeds in app.js to be an empty array and refresh the
-         * page?
-         */
+         * empty. */
+
         it('are defined', function() {
             expect(allFeeds).toBeDefined();
             expect(Array.isArray(allFeeds)).toBeTruthy(); // to check an array exists
@@ -31,16 +28,17 @@ $(function() {
         });
 
 
-        /* TODO: Write a test that loops through each feed
+        /* Wrote a test that loops through each feed
          * in the allFeeds object and ensures it has a URL defined
-         * and that the URL is not empty.
-         */
+         * and that the URL is not empty using forEach */
+
          it('have URLs that are defined & not empty', function() {
-            for (var i = 0; i < allFeedsLength; i++) {
-                expect(allFeeds[i].url).toBeDefined(); // expect to be defined
-                expect(allFeeds[i].url.length).not.toBe(0); // expect length to be greater than 0
-                expect(allFeeds[i].url).toMatch(/(http(s?))\:\/\//); // Using RegExp to match http:// or https://
-            }
+            allFeeds.forEach(function(feed) {
+                expect(feed.url).toBeTruthy(); // https://www.sitepoint.com/javascript-truthy-falsy/
+                // expect(feed.url).toBeDefined(); // expect to be defined
+                // expect(feed.url.length).not.toBe(0); // expect length to be greater than 0
+                expect(feed.url).toMatch(/(http(s?))\:\/\//); // Using RegExp to match http:// or https://
+            });
         });
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
         //  RegExp literal --> opening & closing forward slashes --> / RegExp in here /
@@ -49,11 +47,13 @@ $(function() {
         // | or symbol
         //  \/\/ --> backslash \ preceding a special character indicates that the next character is not special & to interpret literally --> //
 
+        // https://mathiasbynens.be/demo/url-regex <-- Another reference
+        // Diego perini's is the best --> /_^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$_iuS/
 
-        /* TODO: Write a test that loops through each feed
+        /* Wrote a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
-         * and that the name is not empty.
-         */
+         * and that the name is not empty */
+
         it('have names that are defined & not empty', function() {
             for (var i = 0; i < allFeedsLength; i++) {
                 expect(allFeeds[i].name).toBeDefined(); // expect to be defined
@@ -61,76 +61,69 @@ $(function() {
                 expect(allFeeds[i].name.length).not.toBe(0);
             }
         });
-
-        for (var i = 0; i < allFeedsLength; i++) {
-            if (allFeeds[i].name === '' || null) {
-                it('There is an empty name', function() {
-                    expect(allFeeds[i].name).not.toBeDefined(); // fails if URL is an empty string
-                });
-            }
-        }
     });
 
 
-    /* TODO: Write a new test suite named "The menu" */
+    /* Wrote a new test suite named "The menu" */
     describe('The menu', function() {
         // Global vars to be accessed
-        var $body = $(document.body);
-        var menuIcon = $('.menu-icon-link');
-        /* TODO: Write a test that ensures the menu element is
-         * hidden by default. You'll have to analyze the HTML and
-         * the CSS to determine how we're performing the
-         * hiding/showing of the menu element.
-         */
+        var $body = $('body');
+        var $menuIcon = $('.menu-icon-link');
+        var menuVis = $('body .slide-menu');
+        var menuWidth = menuVis.width();
+        var menuOffset = menuVis.offset().left;
+
+        /* Wrote a test that ensures the menu element is
+         * hidden by default. */
 
         it('is hidden initially using class: "menu-hidden" on the body div', function() {
             expect($body.hasClass('menu-hidden')).toBeTruthy();
         });
-         /* TODO: Write a test that ensures the menu changes
-          * visibility when the menu icon is clicked. This test
-          * should have two expectations: does the menu display when
-          * clicked and does it hide when clicked again.
-          */
-        it('icon toggles visibility when clicked', function() {
-            menuIcon.click(); // .click() method simulates a mouse click on an element. https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click
-            expect($body.hasClass('')).toBeTruthy(); // No class when clicked.
+         /* Wrote a test that ensures the menu changes
+          * toggles visibility when the menu icon is clicked. */
 
-            menuIcon.click();
+        it('icon toggles visibility when clicked', function() {
+            $menuIcon.click(); // .click() method simulates a mouse click on an element. https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/click
+            console.log(menuWidth); // check the width is 160
+            console.log(menuOffset); // just checking values
+
+            expect(menuVis.is(':visible')).toBeTruthy(); // to check visibility
+            expect($body.hasClass('menu-hidden')).toBeFalsy();
+
+            $menuIcon.click();
             expect($body.hasClass('menu-hidden')).toBeTruthy(); // has menu-hidden class when clicked again.
         });
 
     });
-    /* TODO: Write a new test suite named "Initial Entries" */
+    /* Wrote a new test suite named "Initial Entries" */
     describe('Initial Entries', function() {
-        /* TODO: Write a test that ensures when the loadFeed
-         * function is called and completes its work, there is at least
-         * a single .entry element within the .feed container.
-         * Remember, loadFeed() is asynchronous so this test will require
-         * the use of Jasmine's beforeEach and asynchronous done() function.
-         */
-        var feedContainer = document.querySelector('.feed');
+        /* Wrote a test that ensures the loadFeed
+         * function is called and completes its work, and there is at least
+         * a single .entry element within the .feed container. */
+
+        var $feedContainerEntry = $('div.feed a.entry-link article.entry');
 
          // Ensure loadFeed function works when called
         beforeEach(function(done) { // Jasmine's beforeEach
-            loadFeed(0, function() { // Load the first feed we've defined (index of 0) & cb: done().
-                done(); // asynchronous done() function
-            });
+            loadFeed(0, done);
         });
          // At least 1 single .entry within the .feed container
         it("has at least 1 entry & it's entry link in the .feed container", function(done) {
-            var numOfEntries = feedContainer.getElementsByClassName('entry').length;
-            var numOfEntryLinks = feedContainer.getElementsByClassName('entry-link').length;
-            expect(numOfEntries >= 0 && numOfEntryLinks >= 0).toBeTruthy();
+            var numOfEntries = $feedContainerEntry.length;
+            console.log(numOfEntries); // there is at least 1 entry
+            console.log($('div.feed a.entry-link article.entry').html()); // to check the first entry's html
+            expect(numOfEntries >= 0).toBeTruthy();
+            expect($('.feed .entry-link').children().hasClass('entry')).toBeTruthy(); // to check the child of .feed .entry-link
+            expect($('.feed').children().hasClass('entry-link')).toBeTruthy(); // to check the child of .feed
             done();
         });
 
     });
-    /* TODO: Write a new test suite named "New Feed Selection" */
+    /* Wrote a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
-        /* TODO: Write a test that ensures when a new feed is loaded
-         * by the loadFeed function that the content actually changes.
-         * Remember, loadFeed() is asynchronous.
-         */
+        /* Wrote a test that ensures a new feed is loaded
+         * by the loadFeed function and that the content actually changes. */
+
         var feedContainerContentInit;
         var feedContainerContentNext;
 
@@ -146,7 +139,7 @@ $(function() {
         });
 
         it("successfully changes content using loadFeed()", function(done) {
-            expect(feedContainerContentInit != feedContainerContentNext).toBeTruthy(); // compare the two stored content to make sure they are not equal to each other.
+            expect(feedContainerContentInit).not.toBe(feedContainerContentNext) // compare the two stored content to make sure they are not equal to each other.
             console.log(feedContainerContentInit); // Used to check that they are actually not the same
             console.log(feedContainerContentNext);
             done();
